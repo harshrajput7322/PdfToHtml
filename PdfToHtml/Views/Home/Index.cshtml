@@ -1,0 +1,32 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="container">
+    <div class="row">
+        <div class="col-md-6">
+            <img src="https://html2pdf.com/images/html2pdf/logo.svg" class="img-fluid" alt="Image">
+        </div>
+    </div>
+</div>
+
+<div class="container mt-4">
+    <p>Instantly convert HTML files to PDF format with this free online converter. Nothing to install, no registration, no watermark.</p>
+    <ol>
+        <li>Click the UPLOAD FILES button and select up to 20 HTML files or ZIP archives containing HTML, images and stylesheets.</li>
+        <li>Wait for the conversion process to finish and download files either one by one, using thumbnails, or in a ZIP archive.</li>
+    </ol>
+</div>
+
+<input type="file" id="htmlFileInput" onchange="convertToPdf()" accept=".html">
+<button onclick="clearFile()">Clear</button>
+
+
+
+<div id="pdfContainer">
+    <iframe id="pdfViewer"></iframe>
+</div>
+
+<button id="downloadButton" onclick="downloadPdf()" disabled>Download PDF</button>
+
+
