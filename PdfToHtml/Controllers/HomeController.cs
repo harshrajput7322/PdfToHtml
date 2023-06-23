@@ -1,7 +1,6 @@
-﻿
-using Microsoft.AspNetCore.Mvc;
-using PdfToHtml.Models;
-using SelectPdf;
+﻿using Microsoft.AspNetCore.Mvc;
+using PuppeteerSharp;
+using System.Text;
 
 namespace PdfToHtml.Controllers
 {
@@ -9,11 +8,9 @@ namespace PdfToHtml.Controllers
     {
         private readonly ILogger<HomeController> _logger;
 
-
         public HomeController(ILogger<HomeController> logger)
         {
             _logger = logger;
-
         }
 
         public IActionResult Index()
@@ -30,32 +27,52 @@ namespace PdfToHtml.Controllers
                 return BadRequest();
             }
 
-            // Load the HTML file
-            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var stream = new MemoryStream())
             {
-                var htmlContent = reader.ReadToEnd();
+                var task = new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultRevision);
+                task.Wait();
 
-                // Create the PDF converter
-                var converter = new SelectPdf.HtmlToPdf();
+                var browser = Puppeteer.LaunchAsync(new LaunchOptions
+                {
+                    Headless = true
+                }).Result;
 
-                // Convert HTML to PDF
-                var pdf = converter.ConvertHtmlString(htmlContent);
+                try
+                {
+                    var pageTask = browser.NewPageAsync();
+                    pageTask.Wait();
+                    var page = pageTask.Result;
 
-                // Save the PDF document to a MemoryStream
-                var stream = new MemoryStream();
-                pdf.Save(stream);
-                stream.Position = 0;
+                    var htmlContent = new StreamReader(file.OpenReadStream()).ReadToEnd();
 
-                // Set the response content type
+                    var setContentTask = page.SetContentAsync(htmlContent);
+                    setContentTask.Wait();
+
+                    var pdfStreamTask = page.PdfStreamAsync();
+                    pdfStreamTask.Wait();
+                    var pdfStream = pdfStreamTask.Result;
+
+                    pdfStream.CopyTo(stream);
+                }
+                finally
+                {
+                    browser.CloseAsync().Wait();
+                }
+
                 var contentType = "application/pdf";
 
-                // Return the PDF file as a downloadable attachment
-                return File(stream, contentType, "output.pdf");
+                return File(stream.ToArray(), contentType, "output.pdf");
             }
         }
 
-
-
     }
+
 }
+
+
+
+
+
+
+
 

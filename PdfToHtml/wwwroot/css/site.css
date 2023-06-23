@@ -33,3 +33,49 @@ body {
     height: 100%;
     border: none;
 }
+
+#downloadButton {
+    background-color: #007bff; /* Blue color for Download button */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+#clearButton {
+    background-color: #4CAF50; /* Green color for Clear button */
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-right: 10px;
+}
+
+    #downloadButton[disabled],
+    #clearButton[disabled] {
+        background-color: #999999;
+        cursor: not-allowed;
+    }
+
+
+#htmlFileInput {
+    display: none;
+}
+    
+/* Style the custom file input button */
+.custom-file-label {
+    background-color: #FF7F50;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    display: inline-block;
+}
+
+    /* Optional: Add hover effect */
+    .custom-file-label:hover {
+        background-color: #808000;
+    }
+
+
