@@ -18,15 +18,19 @@
     </ol>
 </div>
 
-<input type="file" id="htmlFileInput" onchange="convertToPdf()" accept=".html">
-<button onclick="clearFile()">Clear</button>
+<div class="container">
+    <label for="htmlFileInput" class="custom-file-label">Choose HTML File</label>
+    <input type="file" id="htmlFileInput" onchange="convertToPdf()" accept=".html">
+
+
+    <button onclick="clearFile()" id="clearButton">Clear</button>
 
 
 
-<div id="pdfContainer">
-    <iframe id="pdfViewer"></iframe>
+    <div id="pdfContainer">
+        <iframe id="pdfViewer"></iframe>
+    </div>
+
+    <button id="downloadButton" onclick="downloadPdf()" disabled>Download PDF</button>
 </div>
-
-<button id="downloadButton" onclick="downloadPdf()" disabled>Download PDF</button>
-
 

@@ -37,11 +37,19 @@ function convertToPdf() {
     }
 }
 
-
-
 function clearFile() {
     var fileInput = document.getElementById("htmlFileInput");
+    var pdfViewer = document.getElementById("pdfViewer");
+    var downloadButton = document.getElementById("downloadButton");
+
+    // Clear the file input value
     fileInput.value = null;
+
+    // Clear the PDF viewer by setting the iframe source to an empty string
+    pdfViewer.src = "";
+
+    // Disable the download button
+    downloadButton.disabled = true;
 }
 
 function downloadPdf() {

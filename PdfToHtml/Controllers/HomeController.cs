@@ -1,7 +1,6 @@
 ﻿
 using Microsoft.AspNetCore.Mvc;
 using PdfToHtml.Models;
-using SelectPdf;
 
 namespace PdfToHtml.Controllers
 {
@@ -22,6 +21,7 @@ namespace PdfToHtml.Controllers
         }
 
         [HttpPost]
+
         public IActionResult ConvertToPdf(IFormFile file)
         {
             if (file == null || file.Length == 0)
@@ -30,32 +30,19 @@ namespace PdfToHtml.Controllers
                 return BadRequest();
             }
 
-            // Load the HTML file
-            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var stream = new MemoryStream())
             {
-                var htmlContent = reader.ReadToEnd();
+                var htmlContent = new StreamReader(file.OpenReadStream()).ReadToEnd();
 
-                // Create the PDF converter
-                var converter = new SelectPdf.HtmlToPdf();
+                var Renderer = new IronPdf.HtmlToPdf();
 
                 // Convert HTML to PDF
-                var pdf = converter.ConvertHtmlString(htmlContent);
+                var pdf = Renderer.RenderHtmlAsPdf(htmlContent);
 
-                // Save the PDF document to a MemoryStream
-                var stream = new MemoryStream();
-                pdf.Save(stream);
-                stream.Position = 0;
-
-                // Set the response content type
                 var contentType = "application/pdf";
-
-                // Return the PDF file as a downloadable attachment
-                return File(stream, contentType, "output.pdf");
+                return File(pdf.BinaryData, contentType, "output.pdf");
             }
         }
-
-
-
     }
 }
 
