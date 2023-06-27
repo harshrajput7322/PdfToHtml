@@ -1,7 +1,12 @@
 ﻿
+using iText.Html2pdf;
+using iText.Kernel.Pdf;
+using iTextSharp.text;
+using iTextSharp.tool.xml;
 using Microsoft.AspNetCore.Mvc;
 using PdfToHtml.Models;
-using SelectPdf;
+using System.Text;
+using PdfDocument = iText.Kernel.Pdf.PdfDocument;
 
 namespace PdfToHtml.Controllers
 {
@@ -35,22 +40,22 @@ namespace PdfToHtml.Controllers
             {
                 var htmlContent = reader.ReadToEnd();
 
-                // Create the PDF converter
-                var converter = new SelectPdf.HtmlToPdf();
+                // Create the PDF writer
+                var writer = new PdfWriter(stream);
+
+                // Create the PDF document
+                var pdfDocument = new PdfDocument(writer);
 
                 // Convert HTML to PDF
-                var pdf = converter.ConvertHtmlString(htmlContent);
+                var converter = new ConverterProperties();
+                HtmlConverter.ConvertToPdf(htmlContent, pdfDocument, converter);
 
-                // Save the PDF document to a MemoryStream
-                var stream = new MemoryStream();
-                pdf.Save(stream);
-                stream.Position = 0;
+                // Close the PDF document
+                pdfDocument.Close();
 
-                // Set the response content type
+                var pdfBytes = stream.ToArray();
                 var contentType = "application/pdf";
-
-                // Return the PDF file as a downloadable attachment
-                return File(stream, contentType, "output.pdf");
+                return File(pdfBytes, contentType, "output.pdf");
             }
         }
 
