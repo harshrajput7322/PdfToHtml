@@ -35,27 +35,30 @@ namespace PdfToHtml.Controllers
                 return BadRequest();
             }
 
-            // Load the HTML file
-            using (var reader = new StreamReader(file.OpenReadStream()))
+            using (var stream = new MemoryStream()) // Create a MemoryStream object
             {
-                var htmlContent = reader.ReadToEnd();
+                // Load the HTML file
+                using (var reader = new StreamReader(file.OpenReadStream()))
+                {
+                    var htmlContent = reader.ReadToEnd();
 
-                // Create the PDF writer
-                var writer = new PdfWriter(stream);
+                    // Create the PDF writer
+                    var writer = new PdfWriter(stream);
 
-                // Create the PDF document
-                var pdfDocument = new PdfDocument(writer);
+                    // Create the PDF document
+                    var pdfDocument = new PdfDocument(writer);
 
-                // Convert HTML to PDF
-                var converter = new ConverterProperties();
-                HtmlConverter.ConvertToPdf(htmlContent, pdfDocument, converter);
+                    // Convert HTML to PDF
+                    var converter = new ConverterProperties();
+                    HtmlConverter.ConvertToPdf(htmlContent, pdfDocument, converter);
 
-                // Close the PDF document
-                pdfDocument.Close();
+                    // Close the PDF document
+                    pdfDocument.Close();
 
-                var pdfBytes = stream.ToArray();
-                var contentType = "application/pdf";
-                return File(pdfBytes, contentType, "output.pdf");
+                    var pdfBytes = stream.ToArray();
+                    var contentType = "application/pdf";
+                    return File(pdfBytes, contentType, "output.pdf");
+                }
             }
         }
 
