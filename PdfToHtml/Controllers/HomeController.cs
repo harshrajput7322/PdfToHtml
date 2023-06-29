@@ -1,12 +1,8 @@
 ﻿
-using iText.Html2pdf;
-using iText.Kernel.Pdf;
-using iTextSharp.text;
-using iTextSharp.tool.xml;
+
 using Microsoft.AspNetCore.Mvc;
-using PdfToHtml.Models;
-using System.Text;
-using PdfDocument = iText.Kernel.Pdf.PdfDocument;
+using HiQPdf;
+using HtmlToPdf = HiQPdf.HtmlToPdf;
 
 namespace PdfToHtml.Controllers
 {
@@ -42,22 +38,20 @@ namespace PdfToHtml.Controllers
                 {
                     var htmlContent = reader.ReadToEnd();
 
-                    // Create the PDF writer
-                    var writer = new PdfWriter(stream);
+                    // Create the HTML to PDF converter
+                    var converter = new HtmlToPdf();
 
-                    // Create the PDF document
-                    var pdfDocument = new PdfDocument(writer);
+                    // Set the base URL (can be null if not needed)
+                    string baseUrl = null;
 
                     // Convert HTML to PDF
-                    var converter = new ConverterProperties();
-                    HtmlConverter.ConvertToPdf(htmlContent, pdfDocument, converter);
+                    byte[] pdfBytes = converter.ConvertHtmlToMemory(htmlContent, baseUrl);
 
-                    // Close the PDF document
-                    pdfDocument.Close();
+                    // Save the PDF to the memory stream
+                    stream.Write(pdfBytes, 0, pdfBytes.Length);
 
-                    var pdfBytes = stream.ToArray();
                     var contentType = "application/pdf";
-                    return File(pdfBytes, contentType, "output.pdf");
+                    return File(stream.ToArray(), contentType, "output.pdf");
                 }
             }
         }
