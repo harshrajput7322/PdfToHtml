@@ -1,7 +1,11 @@
 ﻿
+
+using HiQPdf;
 using Microsoft.AspNetCore.Mvc;
 using PdfToHtml.Models;
-using SelectPdf;
+using System.Text;
+using PdfDocument = iText.Kernel.Pdf.PdfDocument;
+
 
 namespace PdfToHtml.Controllers
 {
@@ -35,22 +39,21 @@ namespace PdfToHtml.Controllers
             {
                 var htmlContent = reader.ReadToEnd();
 
-                // Create the PDF converter
-                var converter = new SelectPdf.HtmlToPdf();
+                    // Create the HTML to PDF converter
+                    var converter = new HtmlToPdf();
 
-                // Convert HTML to PDF
-                var pdf = converter.ConvertHtmlString(htmlContent);
+                    // Set the base URL (can be null if not needed)
+                    string baseUrl = null;
 
-                // Save the PDF document to a MemoryStream
-                var stream = new MemoryStream();
-                pdf.Save(stream);
-                stream.Position = 0;
+                    // Convert HTML to PDF
+                    byte[] pdfBytes = converter.ConvertHtmlToMemory(htmlContent, baseUrl);
 
-                // Set the response content type
-                var contentType = "application/pdf";
+                    // Save the PDF to the memory stream
+                    stream.Write(pdfBytes, 0, pdfBytes.Length);
 
-                // Return the PDF file as a downloadable attachment
-                return File(stream, contentType, "output.pdf");
+                    var contentType = "application/pdf";
+                    return File(stream.ToArray(), contentType, "output.pdf");
+                }
             }
         }
 
